@@ -56,4 +56,4 @@ The seeder creates a "Self serve" pipeline (`signed_up` → `activated` → `pay
 php artisan serve
 ```
 
-Visit `http://localhost:8000/admin` and sign in with the test user above — you'll land straight on the Accounts list.
+Visit `http://localhost:8000/admin` and sign in with the test user above. You'll land straight on the Accounts list.
