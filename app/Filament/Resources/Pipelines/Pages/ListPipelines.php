@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Pipelines\Pages;
 
 use App\Filament\Resources\Pipelines\PipelineResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPipelines extends ListRecords
@@ -13,7 +12,7 @@ class ListPipelines extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            //
         ];
     }
 }

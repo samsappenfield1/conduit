@@ -16,7 +16,8 @@ class ListContacts extends ListRecords
     {
         return [
             ImportAction::make()
-                ->importer(ContactImporter::class),
+                ->importer(ContactImporter::class)
+                ->modalDescription(null),
             CreateAction::make(),
         ];
     }

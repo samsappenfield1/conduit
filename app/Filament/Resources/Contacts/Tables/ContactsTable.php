@@ -56,7 +56,8 @@ class ContactsTable
         return Contact::fields()
             ->map(fn ($field) => TextColumn::make("field_{$field->id}")
                 ->label($field->name)
-                ->getStateUsing(fn (Model $record) => $record->fieldValues->firstWhere('field_id', $field->id)?->value)
+                ->getStateUsing(fn (Model $record) => $record->fieldValues->firstWhere('field_id', $field->id)?->typed_value)
+                ->formatStateUsing(fn ($state): string => $field->type === 'boolean' ? ($state ? 'Yes' : 'No') : (string) $state)
                 ->toggleable(isToggledHiddenByDefault: true))
             ->all();
     }

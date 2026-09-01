@@ -21,6 +21,15 @@ class FieldsTable
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->color(fn (string $state): string => $state === 'account' ? 'success' : 'gray'),
+                TextColumn::make('type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->color(fn (string $state): string => match ($state) {
+                        'number' => 'info',
+                        'date' => 'warning',
+                        'boolean' => 'success',
+                        default => 'gray',
+                    }),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

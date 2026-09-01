@@ -3,8 +3,12 @@
 namespace App\Filament\Resources\Accounts\Pages;
 
 use App\Filament\Resources\Accounts\AccountResource;
+use App\Filament\Support\FieldValueInput;
 use App\Livewire\ActivityTimeline;
+use App\Models\Account;
+use App\Models\FieldValue;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Schema;
@@ -13,13 +17,18 @@ class EditAccount extends EditRecord
 {
     protected static string $resource = AccountResource::class;
 
-    /** @var array<int, string|null> */
+    /** @var array<int, mixed> */
     protected array $pendingFieldValues = [];
 
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->label('Archive')
+                ->modalHeading('Archive account')
+                ->modalDescription(Account::ARCHIVE_WARNING)
+                ->modalSubmitActionLabel('Archive'),
+            RestoreAction::make(),
         ];
     }
 
@@ -36,8 +45,11 @@ class EditAccount extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['fieldValues'] = $this->getRecord()->fieldValues()
-            ->pluck('value', 'field_id')
-            ->map(fn (?string $value): array => filled($value) ? [$value] : [])
+            ->with('field')
+            ->get()
+            ->mapWithKeys(fn (FieldValue $fieldValue): array => [
+                $fieldValue->field_id => FieldValueInput::hydrate($fieldValue),
+            ])
             ->all();
 
         return $data;
@@ -56,7 +68,7 @@ class EditAccount extends EditRecord
         foreach ($this->pendingFieldValues as $fieldId => $value) {
             $this->record->fieldValues()->updateOrCreate(
                 ['field_id' => $fieldId],
-                ['value' => $value],
+                ['typed_value' => $value],
             );
         }
     }

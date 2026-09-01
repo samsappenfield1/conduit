@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Account;
 use App\Models\FieldValue;
+use App\Models\Pipeline;
 use App\Observers\AccountObserver;
 use App\Observers\FieldValueObserver;
+use App\Observers\PipelineObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Account::observe(AccountObserver::class);
         FieldValue::observe(FieldValueObserver::class);
+        Pipeline::observe(PipelineObserver::class);
     }
 }

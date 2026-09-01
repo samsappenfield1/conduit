@@ -16,7 +16,8 @@ class ListAccounts extends ListRecords
     {
         return [
             ImportAction::make()
-                ->importer(AccountImporter::class),
+                ->importer(AccountImporter::class)
+                ->modalDescription(null),
             CreateAction::make(),
         ];
     }

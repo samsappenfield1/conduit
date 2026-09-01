@@ -19,6 +19,12 @@ class PipelineSeeder extends Seeder
             'stages' => ['signed_up', 'activated', 'paying', 'churned'],
         ]);
 
+        Pipeline::create([
+            'name' => 'Enterprise',
+            'type' => 'enterprise',
+            'stages' => ['prospecting', 'qualified', 'proposal', 'negotiation', 'closed_won', 'churned'],
+        ]);
+
         $accounts = [
             [
                 'name' => 'Acme Widgets',

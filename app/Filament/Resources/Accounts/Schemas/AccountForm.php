@@ -26,6 +26,13 @@ class AccountForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('domain')
+                    ->maxLength(255),
+                Select::make('owner_id')
+                    ->label('Owner')
+                    ->relationship('owner', 'name')
+                    ->searchable()
+                    ->preload(),
                 Select::make('current_stage')
                     ->options(function (Get $get): array {
                         $stages = Pipeline::find($get('pipeline_id'))?->stages ?? [];

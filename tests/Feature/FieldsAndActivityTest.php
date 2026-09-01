@@ -105,6 +105,33 @@ class FieldsAndActivityTest extends TestCase
         $this->assertSame('signed_up', $activity->attribute_changes->get('old')['current_stage']);
     }
 
+    public function test_domain_change_is_logged_with_old_and_new_value(): void
+    {
+        $account = $this->makeAccount();
+
+        $account->update(['domain' => 'acme.example']);
+
+        $activity = Activity::forSubject($account)->where('description', 'updated')->latest()->first();
+
+        $this->assertNotNull($activity);
+        $this->assertSame('acme.example', $activity->attribute_changes->get('attributes')['domain']);
+        $this->assertNull($activity->attribute_changes->get('old')['domain']);
+    }
+
+    public function test_owner_change_is_logged_with_old_and_new_value(): void
+    {
+        $account = $this->makeAccount();
+        $owner = User::factory()->create();
+
+        $account->update(['owner_id' => $owner->id]);
+
+        $activity = Activity::forSubject($account)->where('description', 'updated')->latest()->first();
+
+        $this->assertNotNull($activity);
+        $this->assertSame($owner->id, $activity->attribute_changes->get('attributes')['owner_id']);
+        $this->assertNull($activity->attribute_changes->get('old')['owner_id']);
+    }
+
     public function test_field_value_change_is_logged_against_the_owning_account(): void
     {
         $account = $this->makeAccount();
@@ -129,6 +156,21 @@ class FieldsAndActivityTest extends TestCase
 
         $this->assertSame('Manufacturing', $activities[1]->attribute_changes->get('attributes')['Industry']);
         $this->assertSame('Retail', $activities[1]->attribute_changes->get('old')['Industry']);
+    }
+
+    public function test_domain_saves_through_the_normal_account_edit_form(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $account = $this->makeAccount();
+
+        Livewire::test(EditAccount::class, ['record' => $account->getKey()])
+            ->fillForm(['domain' => 'acme.example'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('acme.example', $account->fresh()->domain);
     }
 
     public function test_field_values_save_through_the_normal_account_edit_form(): void

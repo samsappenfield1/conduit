@@ -1,4 +1,4 @@
-![Conduit](public/images/conduit-logo-full.svg)
+![Conduit](public/images/conduit-logo-final-v.svg)
 
 # Conduit
 
@@ -24,11 +24,10 @@ This is deliberate. Most CRMs let workflows sprawl into tangled logic that nobod
 - A model observer on `Account` that logs every stage change, as an early placeholder for exposing that transition externally (API or event, later).
 - A Filament admin panel for pipelines, accounts, contacts, and fields.
 
-Self serve pipelines only in v1.
+Pipelines are locked to exactly two system-defined ones: self serve and enterprise. Their stages are editable; neither can be renamed, deleted, or joined by a third.
 
 ## What's coming later
 
-- **enterprise pipelines**: a second pipeline type for sales-led, multi-stage deal cycles, alongside self serve.
 - **Automation**: a separate tool, outside this codebase and this database, that reads pipeline, account, and contact data from Conduit (via an API or events) and acts on stage transitions. Conduit's job is only to model the pipeline and record the transition; it never stores automation definitions or executes actions itself.
 
 ## Local setup

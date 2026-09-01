@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\Pages\Login;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -29,11 +30,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName('Conduit')
-            ->brandLogo(asset('images/conduit-logo-full.svg'))
-            ->darkModeBrandLogo(asset('images/conduit-logo-full-dark.svg'))
+            ->brandLogo(asset('images/conduit-logo-final-v.svg'))
             ->brandLogoHeight('1.75rem')
-            ->favicon(asset('images/conduit-icon.svg'))
-            ->login()
+            ->favicon(asset('images/conduit-icon-final-v.svg'))
+            ->login(Login::class)
             ->colors([
                 'primary' => Color::Indigo,
                 'gray' => Color::Zinc,

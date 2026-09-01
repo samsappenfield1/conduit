@@ -10,6 +10,11 @@ class Field extends Model
     protected $fillable = [
         'entity_type',
         'name',
+        'type',
+    ];
+
+    protected $attributes = [
+        'type' => 'text',
     ];
 
     public function values(): HasMany

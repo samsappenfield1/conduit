@@ -15,14 +15,17 @@ class PipelineForm
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled()
+                    ->helperText('System-defined pipelines cannot be renamed.'),
                 Select::make('type')
                     ->options([
                         'self_serve' => 'self serve',
                         'enterprise' => 'enterprise',
                     ])
                     ->default('self_serve')
-                    ->required(),
+                    ->required()
+                    ->disabled(),
                 TagsInput::make('stages')
                     ->required()
                     ->placeholder('Add a stage and press enter')

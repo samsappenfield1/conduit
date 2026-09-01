@@ -22,6 +22,15 @@ class FieldForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Select::make('type')
+                    ->options([
+                        'text' => 'Text',
+                        'number' => 'Number',
+                        'date' => 'Date',
+                        'boolean' => 'Boolean',
+                    ])
+                    ->default('text')
+                    ->required(),
             ]);
     }
 }

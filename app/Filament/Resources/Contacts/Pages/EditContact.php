@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Contacts\Pages;
 
 use App\Filament\Resources\Contacts\ContactResource;
+use App\Filament\Support\FieldValueInput;
 use App\Livewire\ActivityTimeline;
+use App\Models\FieldValue;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Livewire;
@@ -13,7 +15,7 @@ class EditContact extends EditRecord
 {
     protected static string $resource = ContactResource::class;
 
-    /** @var array<int, string|null> */
+    /** @var array<int, mixed> */
     protected array $pendingFieldValues = [];
 
     protected function getHeaderActions(): array
@@ -35,8 +37,11 @@ class EditContact extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['fieldValues'] = $this->getRecord()->fieldValues()
-            ->pluck('value', 'field_id')
-            ->map(fn (?string $value): array => filled($value) ? [$value] : [])
+            ->with('field')
+            ->get()
+            ->mapWithKeys(fn (FieldValue $fieldValue): array => [
+                $fieldValue->field_id => FieldValueInput::hydrate($fieldValue),
+            ])
             ->all();
 
         return $data;
@@ -55,7 +60,7 @@ class EditContact extends EditRecord
         foreach ($this->pendingFieldValues as $fieldId => $value) {
             $this->record->fieldValues()->updateOrCreate(
                 ['field_id' => $fieldId],
-                ['value' => $value],
+                ['typed_value' => $value],
             );
         }
     }

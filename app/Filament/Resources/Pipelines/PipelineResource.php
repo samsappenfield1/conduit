@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Pipelines;
 
-use App\Filament\Resources\Pipelines\Pages\CreatePipeline;
 use App\Filament\Resources\Pipelines\Pages\EditPipeline;
 use App\Filament\Resources\Pipelines\Pages\ListPipelines;
 use App\Filament\Resources\Pipelines\Schemas\PipelineForm;
@@ -13,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PipelineResource extends Resource
 {
@@ -43,8 +43,26 @@ class PipelineResource extends Resource
     {
         return [
             'index' => ListPipelines::route('/'),
-            'create' => CreatePipeline::route('/create'),
             'edit' => EditPipeline::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * Pipelines are limited to the two system-defined pipelines
+     * (Self serve and Enterprise): no more can be created.
+     */
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
     }
 }

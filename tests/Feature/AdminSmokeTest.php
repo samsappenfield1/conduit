@@ -17,7 +17,6 @@ class AdminSmokeTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)->get('/admin/pipelines')->assertOk();
-        $this->actingAs($user)->get('/admin/pipelines/create')->assertOk();
         $this->actingAs($user)->get('/admin/accounts')->assertOk();
         $this->actingAs($user)->get('/admin/accounts/create')->assertOk();
         $this->actingAs($user)->get('/admin/contacts')->assertOk();

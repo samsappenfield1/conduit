@@ -94,4 +94,22 @@ class CsvImportTest extends TestCase
         $this->assertSame('Jamie Rivera', $jamie->name);
         $this->assertNotNull($jamie->uuid);
     }
+
+    public function test_the_import_accounts_modal_has_no_download_example_csv_link(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(ListAccounts::class)
+            ->mountAction('import')
+            ->assertDontSee('Download example CSV file');
+    }
+
+    public function test_the_import_contacts_modal_has_no_download_example_csv_link(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(ListContacts::class)
+            ->mountAction('import')
+            ->assertDontSee('Download example CSV file');
+    }
 }

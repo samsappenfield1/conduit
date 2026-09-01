@@ -6,6 +6,7 @@ use App\Models\Concerns\HasFields;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -14,6 +15,7 @@ class Contact extends Model
     use HasFields;
     use HasUuid;
     use LogsActivity;
+    use SoftDeletes;
 
     protected $fillable = [
         'account_id',

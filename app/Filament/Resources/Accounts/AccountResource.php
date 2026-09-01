@@ -14,6 +14,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AccountResource extends Resource
 {
@@ -31,6 +33,17 @@ class AccountResource extends Resource
     public static function table(Table $table): Table
     {
         return AccountsTable::configure($table);
+    }
+
+    /**
+     * Archived accounts stay queryable (for the trashed filter, and for
+     * viewing/editing an archived account directly); the trashed filter's
+     * own query adds the scope back for the default "active only" view.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 
     public static function getRelations(): array
