@@ -17,7 +17,6 @@ class AccountResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'domain' => $this->domain,
             'current_stage' => $this->current_stage,
             'pipeline' => new PipelineResource($this->pipeline),
             'owner' => $this->owner ? [

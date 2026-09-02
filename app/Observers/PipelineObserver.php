@@ -10,7 +10,7 @@ class PipelineObserver
     public function creating(Pipeline $pipeline): void
     {
         if (Pipeline::count() >= 2) {
-            throw new RuntimeException('Pipelines are limited to the two system-defined pipelines: Self serve and Enterprise.');
+            throw new RuntimeException('Pipelines are limited to the two system-defined pipelines.');
         }
     }
 

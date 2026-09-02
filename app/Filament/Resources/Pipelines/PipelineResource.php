@@ -49,7 +49,7 @@ class PipelineResource extends Resource
 
     /**
      * Pipelines are limited to the two system-defined pipelines
-     * (Self serve and Enterprise): no more can be created.
+     * (keyed by `type`, not `name` — the name is editable): no more can be created.
      */
     public static function canCreate(): bool
     {

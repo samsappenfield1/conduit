@@ -26,13 +26,12 @@ class Account extends Model
      *
      * @var array<int, string>
      */
-    const TRACKED_ATTRIBUTES = ['name', 'domain', 'current_stage', 'pipeline_id', 'owner_id'];
+    const TRACKED_ATTRIBUTES = ['name', 'current_stage', 'pipeline_id', 'owner_id'];
 
     protected $fillable = [
         'pipeline_id',
         'owner_id',
         'name',
-        'domain',
         'current_stage',
     ];
 

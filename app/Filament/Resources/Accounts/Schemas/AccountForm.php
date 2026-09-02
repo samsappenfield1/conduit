@@ -19,14 +19,18 @@ class AccountForm
         return $schema
             ->components([
                 Select::make('pipeline_id')
-                    ->relationship('pipeline', 'name')
+                    ->label('Pipeline')
+                    ->options(fn (?Account $record): array => Pipeline::query()
+                        ->where(fn ($query) => $query
+                            ->where('is_active', true)
+                            ->when($record?->pipeline_id, fn ($query, $pipelineId) => $query->orWhere('id', $pipelineId)))
+                        ->pluck('name', 'id')
+                        ->all())
                     ->live()
                     ->required()
                     ->afterStateUpdated(fn (Set $set) => $set('current_stage', null)),
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
-                TextInput::make('domain')
                     ->maxLength(255),
                 Select::make('owner_id')
                     ->label('Owner')

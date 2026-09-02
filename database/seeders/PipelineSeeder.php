@@ -16,13 +16,13 @@ class PipelineSeeder extends Seeder
         $pipeline = Pipeline::create([
             'name' => 'Self serve',
             'type' => 'self_serve',
-            'stages' => ['signed_up', 'activated', 'paying', 'churned'],
+            'stages' => ['signed_up', 'paying', 'churned'],
         ]);
 
         Pipeline::create([
             'name' => 'Enterprise',
             'type' => 'enterprise',
-            'stages' => ['prospecting', 'qualified', 'proposal', 'negotiation', 'closed_won', 'churned'],
+            'stages' => ['discovery', 'meeting_booked', 'qualified', 'not_qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost'],
         ]);
 
         $accounts = [
@@ -35,7 +35,7 @@ class PipelineSeeder extends Seeder
             ],
             [
                 'name' => 'Bright Ideas Co',
-                'current_stage' => 'activated',
+                'current_stage' => 'signed_up',
                 'contacts' => [
                     ['name' => 'Priya Shah', 'email' => 'priya@brightideas.example'],
                     ['name' => 'Sam Okafor', 'email' => 'sam@brightideas.example'],

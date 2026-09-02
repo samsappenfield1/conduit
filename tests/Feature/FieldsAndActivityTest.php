@@ -40,14 +40,14 @@ class FieldsAndActivityTest extends TestCase
         $accountFields = Account::fields();
         $contactFields = Contact::fields();
 
-        $this->assertCount(1, $accountFields);
-        $this->assertSame('Industry', $accountFields->first()->name);
+        $this->assertTrue($accountFields->contains('name', 'Industry'));
+        $this->assertFalse($accountFields->contains('name', 'LinkedIn'));
 
-        $this->assertCount(1, $contactFields);
-        $this->assertSame('LinkedIn', $contactFields->first()->name);
+        $this->assertTrue($contactFields->contains('name', 'LinkedIn'));
+        $this->assertFalse($contactFields->contains('name', 'Industry'));
     }
 
-    public function test_deleting_a_field_removes_its_values_across_all_records(): void
+    public function test_archiving_a_field_leaves_its_definition_and_values_untouched(): void
     {
         $account = $this->makeAccount();
         $field = Field::create(['entity_type' => 'account', 'name' => 'Industry']);
@@ -57,11 +57,15 @@ class FieldsAndActivityTest extends TestCase
             'value' => 'Manufacturing',
         ]);
 
-        $this->assertDatabaseCount('field_values', 1);
-
         $field->delete();
 
-        $this->assertDatabaseCount('field_values', 0);
+        $this->assertTrue($field->fresh()->trashed());
+        $this->assertDatabaseHas('fields', ['id' => $field->id, 'name' => 'Industry']);
+        $this->assertDatabaseCount('field_values', 1);
+        $this->assertSame(
+            'Manufacturing',
+            $account->fieldValues()->where('field_id', $field->id)->value('value'),
+        );
     }
 
     public function test_uuid_is_never_exposed_as_a_field_and_cannot_be_overwritten_by_one(): void
@@ -105,17 +109,18 @@ class FieldsAndActivityTest extends TestCase
         $this->assertSame('signed_up', $activity->attribute_changes->get('old')['current_stage']);
     }
 
-    public function test_domain_change_is_logged_with_old_and_new_value(): void
+    public function test_domain_field_value_change_is_logged_with_old_and_new_value(): void
     {
         $account = $this->makeAccount();
+        $domainField = Field::where('entity_type', 'account')->where('name', 'Domain')->first();
 
-        $account->update(['domain' => 'acme.example']);
+        $account->fieldValues()->create(['field_id' => $domainField->id, 'typed_value' => 'acme.example']);
 
-        $activity = Activity::forSubject($account)->where('description', 'updated')->latest()->first();
+        $activity = Activity::forSubject($account)->where('description', 'Domain updated')->latest()->first();
 
         $this->assertNotNull($activity);
-        $this->assertSame('acme.example', $activity->attribute_changes->get('attributes')['domain']);
-        $this->assertNull($activity->attribute_changes->get('old')['domain']);
+        $this->assertSame('acme.example', $activity->attribute_changes->get('attributes')['Domain']);
+        $this->assertNull($activity->attribute_changes->get('old')['Domain']);
     }
 
     public function test_owner_change_is_logged_with_old_and_new_value(): void
@@ -164,13 +169,17 @@ class FieldsAndActivityTest extends TestCase
         $this->actingAs($user);
 
         $account = $this->makeAccount();
+        $domainField = Field::where('entity_type', 'account')->where('name', 'Domain')->first();
 
         Livewire::test(EditAccount::class, ['record' => $account->getKey()])
-            ->fillForm(['domain' => 'acme.example'])
+            ->fillForm(['fieldValues' => [$domainField->id => ['acme.example']]])
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertSame('acme.example', $account->fresh()->domain);
+        $this->assertSame(
+            'acme.example',
+            $account->fieldValues()->where('field_id', $domainField->id)->value('value'),
+        );
     }
 
     public function test_field_values_save_through_the_normal_account_edit_form(): void
@@ -262,6 +271,6 @@ class FieldsAndActivityTest extends TestCase
     {
         Field::create(['entity_type' => 'contact', 'name' => 'LinkedIn']);
 
-        $this->assertCount(0, Account::fields());
+        $this->assertFalse(Account::fields()->contains('name', 'LinkedIn'));
     }
 }

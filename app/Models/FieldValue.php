@@ -27,14 +27,24 @@ class FieldValue extends Model
         ];
     }
 
+    /**
+     * withTrashed() so an archived Field still resolves here — otherwise
+     * its own SoftDeletingScope would make this (and therefore typed_value)
+     * silently return null/default once the field is archived.
+     */
     public function field(): BelongsTo
     {
-        return $this->belongsTo(Field::class);
+        return $this->belongsTo(Field::class)->withTrashed();
     }
 
+    /**
+     * withTrashed() so archived Accounts/Contacts still resolve here —
+     * otherwise their own SoftDeletingScope makes this silently return
+     * null while editing an archived record's Fields.
+     */
     public function customizable(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo()->withTrashed();
     }
 
     /**

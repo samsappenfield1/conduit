@@ -95,3 +95,29 @@
 .fi-ta-cell {
     padding-block: 0.875rem !important;
 }
+
+/*
+ * Brand logo wordmark: the SVG's text uses fill="currentColor", so setting
+ * `color` here is what makes it legible against the dark topbar/login
+ * background — inherited straight from --gray-950/--gray-50 above.
+ */
+.fi-logo {
+    color: var(--gray-950);
+}
+
+:where(.dark) .fi-logo {
+    color: var(--gray-50);
+}
+
+/*
+ * The inlined SVG carries its own width/height attributes (301x77), which
+ * render at that literal size regardless of the .fi-logo wrapper's own
+ * height — a plain block div doesn't scale a child SVG down on its own.
+ * Forcing the SVG to fill the wrapper's height and let width follow
+ * (viewBox preserves the aspect ratio) restores the original small size.
+ */
+.fi-logo svg {
+    display: block;
+    height: 100%;
+    width: auto;
+}

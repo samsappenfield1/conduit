@@ -23,9 +23,6 @@ class AccountsTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('domain')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('pipeline.name')
                     ->label('Pipeline')
                     ->searchable(),

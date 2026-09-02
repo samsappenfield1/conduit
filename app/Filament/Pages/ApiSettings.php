@@ -44,7 +44,7 @@ class ApiSettings extends Page
                     ->label('Webhook URL')
                     ->url()
                     ->maxLength(255)
-                    ->helperText('Called on any tracked Account field change (stage, owner, domain, or Field values).'),
+                    ->helperText('Called on any tracked Account field change (stage, owner, or Field values).'),
             ])
             ->statePath('data');
     }

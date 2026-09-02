@@ -82,15 +82,17 @@ class AccountWebhookTest extends TestCase
             && $request['account']['owner']['id'] === $owner->id);
     }
 
-    public function test_webhook_fires_on_domain_change(): void
+    public function test_webhook_fires_on_domain_field_value_change(): void
     {
         $this->fakeWebhookUrl();
         Http::fake();
 
         $account = $this->makeAccount();
-        $account->update(['domain' => 'acme.example']);
+        $domainField = Field::where('entity_type', 'account')->where('name', 'Domain')->first();
 
-        Http::assertSent(fn ($request) => $request['field'] === 'domain' && $request['new'] === 'acme.example');
+        $account->fieldValues()->create(['field_id' => $domainField->id, 'typed_value' => 'acme.example']);
+
+        Http::assertSent(fn ($request) => $request['field'] === 'Domain' && $request['new'] === 'acme.example');
     }
 
     public function test_webhook_fires_on_field_value_change(): void

@@ -11,12 +11,18 @@ class Pipeline extends Model
         'name',
         'type',
         'stages',
+        'is_active',
+    ];
+
+    protected $attributes = [
+        'is_active' => true,
     ];
 
     protected function casts(): array
     {
         return [
             'stages' => 'array',
+            'is_active' => 'boolean',
         ];
     }
 

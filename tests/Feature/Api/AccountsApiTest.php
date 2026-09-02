@@ -35,15 +35,16 @@ class AccountsApiTest extends TestCase
         $pipeline = $this->makePipeline();
         $owner = User::factory()->create(['name' => 'Jamie Owner']);
         $field = Field::create(['entity_type' => 'account', 'name' => 'ARR', 'type' => 'number']);
+        $domainField = Field::where('entity_type', 'account')->where('name', 'Domain')->first();
 
         $account = Account::create([
             'pipeline_id' => $pipeline->id,
             'owner_id' => $owner->id,
             'name' => 'Acme Widgets',
-            'domain' => 'acme.example',
             'current_stage' => 'signed_up',
         ]);
         $account->fieldValues()->create(['field_id' => $field->id, 'typed_value' => 500000]);
+        $account->fieldValues()->create(['field_id' => $domainField->id, 'typed_value' => 'acme.example']);
         $account->contacts()->create(['name' => 'Taylor Rivera', 'email' => 'taylor@acme.example']);
 
         $response = $this->getJson('/api/accounts')->assertOk();
@@ -51,7 +52,6 @@ class AccountsApiTest extends TestCase
         $data = $response->json('data.0');
 
         $this->assertSame('Acme Widgets', $data['name']);
-        $this->assertSame('acme.example', $data['domain']);
         $this->assertSame('signed_up', $data['current_stage']);
         $this->assertSame($pipeline->id, $data['pipeline']['id']);
         $this->assertSame('Jamie Owner', $data['owner']['name']);
@@ -60,6 +60,10 @@ class AccountsApiTest extends TestCase
         $arrField = collect($data['fields'])->firstWhere('name', 'ARR');
         $this->assertSame('number', $arrField['type']);
         $this->assertEquals(500000, $arrField['value']);
+
+        $domainFieldData = collect($data['fields'])->firstWhere('name', 'Domain');
+        $this->assertSame('text', $domainFieldData['type']);
+        $this->assertSame('acme.example', $domainFieldData['value']);
     }
 
     public function test_index_can_be_filtered_by_pipeline_id_and_current_stage(): void
